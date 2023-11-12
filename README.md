@@ -144,3 +144,6 @@ Modified the data entry step to include parsing the validated cash memo and ente
 * Maintainability: The application should be easily maintainable, allowing for future updates and enhancements.
 * Compatibility: The application should be compatible with the existing LAN infrastructure and compatible with Windows operating systems.
 * Integration: The application should seamlessly integrate with the main server and existing systems at Creative Learning's head office. 
+
+## Use Case Diagram
+![Use Case Diagram](/Images/UseCase.png)
