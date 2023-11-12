@@ -251,3 +251,5 @@ For the automated process described, there is the need for several tables in the
    - Username (Unique)
    - PasswordHash
    - Role (e.g., Salesperson, Operator, Administrator)
+
+###
