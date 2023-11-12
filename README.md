@@ -202,3 +202,52 @@ To create a website that performs the automated process described in the second 
 11. **About/Help Page:**
     - Information about the system, its purpose, and how to use it.
     - Help documentation and FAQs.
+
+
+### Database Design Specification
+
+For the automated process described, there is the need for several tables in the database to store relevant information. Some of these tables along with their potential fields to be used are:
+
+1. **SalesTransactions Table:**
+   - TransactionID (Primary Key)
+   - CustomerName
+   - PurchaseDetails
+   - TransactionDate
+
+2. **CashMemos Table:**
+   - MemoID (Primary Key)
+   - TransactionID (Foreign Key referencing SalesTransactions)
+   - FilePath (or Content if stored in the database)
+   - CopyTimestamp
+   - FormatValidated
+
+3. **XMLDocuments Table:**
+   - DocumentID (Primary Key)
+   - MemoID (Foreign Key referencing CashMemos)
+   - Content (or FilePath if stored separately)
+   - EntryTimestamp
+
+4. **DailySalesAnalysis Table:**
+   - AnalysisID (Primary Key)
+   - StoreID (if applicable, referencing a Stores table)
+   - AnalysisDate
+   - TotalSales
+
+5. **MonthlyPerformanceAnalysis Table:**
+   - AnalysisID (Primary Key)
+   - StoreID (if applicable, referencing a Stores table)
+   - AnalysisMonth
+   - TotalSales
+
+6. **DecisionMaking Table:**
+   - DecisionID (Primary Key)
+   - AnalysisID (Foreign Key referencing DailySalesAnalysis with CASCADE DELETE)
+   - ResourceAllocation
+   - MarketingStrategy
+   - ImprovementAreas
+
+7. **UserAccounts Table:**
+   - UserID (Primary Key)
+   - Username (Unique)
+   - PasswordHash
+   - Role (e.g., Salesperson, Operator, Administrator)
