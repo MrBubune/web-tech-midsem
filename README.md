@@ -146,4 +146,4 @@ Modified the data entry step to include parsing the validated cash memo and ente
 * Integration: The application should seamlessly integrate with the main server and existing systems at Creative Learning's head office. 
 
 ## Use Case Diagram
-![Use Case Diagram](/Images/UseCase.png)
+![Use Case Diagram](readme/UseCase.png)
