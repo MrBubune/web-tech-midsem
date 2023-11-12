@@ -205,7 +205,6 @@ To create a website that performs the automated process described in the second 
 
 
 ### Database Design Specification
-
 For the automated process described, there is the need for several tables in the database to store relevant information. Some of these tables along with their potential fields to be used are:
 
 1. **SalesTransactions Table:**
@@ -213,29 +212,30 @@ For the automated process described, there is the need for several tables in the
    - CustomerName
    - PurchaseDetails
    - TransactionDate
+   - StoreID (Foreign Key referencing Stores)
 
 2. **CashMemos Table:**
    - MemoID (Primary Key)
    - TransactionID (Foreign Key referencing SalesTransactions)
-   - FilePath (or Content if stored in the database)
+   - FilePath
    - CopyTimestamp
    - FormatValidated
 
 3. **XMLDocuments Table:**
    - DocumentID (Primary Key)
    - MemoID (Foreign Key referencing CashMemos)
-   - Content (or FilePath if stored separately)
+   - Content
    - EntryTimestamp
 
 4. **DailySalesAnalysis Table:**
    - AnalysisID (Primary Key)
-   - StoreID (if applicable, referencing a Stores table)
+   - StoreID (Foreign Key referencing Stores)
    - AnalysisDate
    - TotalSales
 
 5. **MonthlyPerformanceAnalysis Table:**
    - AnalysisID (Primary Key)
-   - StoreID (if applicable, referencing a Stores table)
+   - StoreID (Foreign Key referencing Stores)
    - AnalysisMonth
    - TotalSales
 
@@ -250,6 +250,87 @@ For the automated process described, there is the need for several tables in the
    - UserID (Primary Key)
    - Username (Unique)
    - PasswordHash
-   - Role (e.g., Salesperson, Operator, Administrator)
+   - Role
 
-###
+8. **Stores Table:**
+   - StoreID (Primary Key)
+   - StoreName (Unique)
+   - Location
+
+#### Corresponding SQL code
+```
+    -- Create SalesTransactions Table
+    CREATE TABLE SalesTransactions (
+        TransactionID INT PRIMARY KEY,
+        CustomerName VARCHAR(255),
+        PurchaseDetails TEXT,
+        TransactionDate DATE,
+        StoreID INT, -- Added StoreID for store association
+        FOREIGN KEY (StoreID) REFERENCES Stores(StoreID) -- Reference to the Stores table
+    );
+
+    -- Create CashMemos Table
+    CREATE TABLE CashMemos (
+        MemoID INT PRIMARY KEY,
+        TransactionID INT,
+        FilePath VARCHAR(255),
+        CopyTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FormatValidated BOOLEAN,
+        FOREIGN KEY (TransactionID) REFERENCES SalesTransactions(TransactionID)
+    );
+
+    -- Create XMLDocuments Table
+    CREATE TABLE XMLDocuments (
+        DocumentID INT PRIMARY KEY,
+        MemoID INT,
+        Content TEXT,
+        EntryTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (MemoID) REFERENCES CashMemos(MemoID)
+    );
+
+    -- Create DailySalesAnalysis Table
+    CREATE TABLE DailySalesAnalysis (
+        AnalysisID INT PRIMARY KEY,
+        StoreID INT, -- Assuming multiple stores, remove if not applicable
+        AnalysisDate DATE,
+        TotalSales DECIMAL(10, 2),
+        FOREIGN KEY (StoreID) REFERENCES Stores(StoreID), -- Reference to the Stores table
+        CONSTRAINT UQ_DailySalesAnalysis UNIQUE (StoreID, AnalysisDate)
+    );
+
+    -- Create MonthlyPerformanceAnalysis Table
+    CREATE TABLE MonthlyPerformanceAnalysis (
+        AnalysisID INT PRIMARY KEY,
+        StoreID INT, -- Assuming multiple stores, remove if not applicable
+        AnalysisMonth DATE,
+        TotalSales DECIMAL(10, 2),
+        FOREIGN KEY (StoreID) REFERENCES Stores(StoreID), -- Reference to the Stores table
+        CONSTRAINT UQ_MonthlyPerformanceAnalysis UNIQUE (StoreID, AnalysisMonth)
+    );
+
+    -- Create DecisionMaking Table
+    CREATE TABLE DecisionMaking (
+        DecisionID INT PRIMARY KEY,
+        AnalysisID INT,
+        ResourceAllocation TEXT,
+        MarketingStrategy TEXT,
+        ImprovementAreas TEXT,
+        FOREIGN KEY (AnalysisID) REFERENCES DailySalesAnalysis(AnalysisID) ON DELETE CASCADE
+    );
+
+    -- Create UserAccounts Table
+    CREATE TABLE UserAccounts (
+        UserID INT PRIMARY KEY,
+        Username VARCHAR(50) UNIQUE,
+        PasswordHash VARCHAR(255),
+        Role VARCHAR(50)
+    );
+
+    -- Create Stores Table
+    CREATE TABLE Stores (
+        StoreID INT PRIMARY KEY,
+        StoreName VARCHAR(255) UNIQUE,
+        Location VARCHAR(255)
+    );
+
+```
