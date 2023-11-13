@@ -191,15 +191,7 @@ To create a website that performs the automated process described in the second 
    - Real-time monitoring of ongoing sales activities.
    - Notifications for any issues or anomalies.
 
-9. **User Management Page:**
-   - User account management (if applicable).
-   - Permissions and roles assignment.
-
-10. **Settings Page:**
-    - Configuration options for the system.
-    - Preferences for data analysis and reporting.
-
-11. **About/Help Page:**
+9. **About/Help Page:**
     - Information about the system, its purpose, and how to use it.
     - Help documentation and FAQs.
 
