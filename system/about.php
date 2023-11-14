@@ -11,7 +11,7 @@
 
         <!-- Bootstrap Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="">Sales Management System</a>
+        <a class="navbar-brand" href="">Creative Learning</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -67,7 +67,7 @@
             <section>
                 <h4>Help Documentation</h4>
                 <p>
-                    For detailed instructions and FAQs, please refer to the help documentation provided with the system.
+                    For detailed instructions and FAQs, please refer to the <a href = "https://github.com/MrBubune/web-tech-midsem#readme"> help documentation </a> provided with the system.
                     If you encounter any issues or have specific questions, feel free to reach out to our support team.
                 </p>
             </section>
