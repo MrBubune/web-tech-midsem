@@ -164,165 +164,111 @@ To create a website that performs the automated process described in the second 
    - Form for salespersons to enter new sales transactions.
    - Generation of cash memos.
 
-3. **Server Upload Page:**
-   - Interface for salespersons to upload the generated cash memo to the main server.
-   - Validation of the format on the client side before upload (optional).
+3. **View Database**
+    - Show all fields and records of Customers, Stores and Books
+    - Concise read-only view
 
-4. **Main Server Dashboard:**
-   - Overview of recent transactions and system status.
-   - Option for the operator to manually validate and enter cash memo details.
+4. **View Transactions**
+    - Show all fields and records of database
+    - Concise read-only view
 
-5. **Data Analysis Pages:**
-   - Daily Sales Analysis Page:
-      - Visualization of daily sales totals.
-      - Sales reports.
-   - Monthly Performance Analysis Page:
-      - Visualizations of monthly sales totals.
-      - Sales trends and comparisons.
+5. **Update Database**
+    - Shows forms to _Create_, _Update_, and _Delete_ records of Customers, Stores and Books
+    - Expands and collapses as needed to prevent unnecessary editing
 
-6. **Decision-Making Page:**
-   - Tools for decision-makers to allocate resources, plan marketing strategies, and identify areas needing improvement based on the analysis.
+6. **Update Transactions**
+    - Shows forms to _Create_, _Update_, and _Delete_ records of Transactions
+    - Expands and collapses as needed to prevent unnecessary editing
 
-7. **Record Keeping Page:**
-   - Archive of XML documents for future reference.
-   - Search and retrieval functionalities.
+7. **About**
+    - Help and support
+    - FAQ
 
-8. **Continuous Monitoring Page:**
-   - Real-time monitoring of ongoing sales activities.
-   - Notifications for any issues or anomalies.
 
-9. **About/Help Page:**
-    - Information about the system, its purpose, and how to use it.
-    - Help documentation and FAQs.
 
 
 ### Database Design Specification
 For the automated process described, there is the need for several tables in the database to store relevant information. Some of these tables along with their potential fields to be used are:
 
-1. **SalesTransactions Table:**
-   - TransactionID (Primary Key)
-   - CustomerName
-   - PurchaseDetails
-   - TransactionDate
-   - StoreID (Foreign Key referencing Stores)
+1. *books* table
+    - ***(isbn)***
+    - book_name	
+    - author
 
-2. **CashMemos Table:**
-   - MemoID (Primary Key)
-   - TransactionID (Foreign Key referencing SalesTransactions)
-   - FilePath
-   - CopyTimestamp
-   - FormatValidated
+2. *bookstores* table
+    - ***(bookstore_id)***	
+    - bookstore_name	
+    - city	
+    - state
 
-3. **XMLDocuments Table:**
-   - DocumentID (Primary Key)
-   - MemoID (Foreign Key referencing CashMemos)
-   - Content
-   - EntryTimestamp
+3. *customers* table
+    - ***(customer_id)***	
+    - customer_name
 
-4. **DailySalesAnalysis Table:**
-   - AnalysisID (Primary Key)
-   - StoreID (Foreign Key referencing Stores)
-   - AnalysisDate
-   - TotalSales
+4. *transactions* table
+    - ***(transaction_id)***	
+    - **customer_id**	
+    - **bookstore_id**	
+    - **isbn**	
+    - transaction_date	
+    - amount
 
-5. **MonthlyPerformanceAnalysis Table:**
-   - AnalysisID (Primary Key)
-   - StoreID (Foreign Key referencing Stores)
-   - AnalysisMonth
-   - TotalSales
-
-6. **DecisionMaking Table:**
-   - DecisionID (Primary Key)
-   - AnalysisID (Foreign Key referencing DailySalesAnalysis with CASCADE DELETE)
-   - ResourceAllocation
-   - MarketingStrategy
-   - ImprovementAreas
-
-7. **UserAccounts Table:**
-   - UserID (Primary Key)
-   - Username (Unique)
-   - PasswordHash
-   - Role
-
-8. **Stores Table:**
-   - StoreID (Primary Key)
-   - StoreName (Unique)
-   - Location
+_NB: Primary keys in ***(bold and bracket)*** Foreign keys in **bold** only_
 
 #### Corresponding SQL code
 ```
-    -- Create SalesTransactions Table
-    CREATE TABLE SalesTransactions (
-        TransactionID INT PRIMARY KEY,
-        CustomerName VARCHAR(255),
-        PurchaseDetails TEXT,
-        TransactionDate DATE,
-        StoreID INT, -- Added StoreID for store association
-        FOREIGN KEY (StoreID) REFERENCES Stores(StoreID) -- Reference to the Stores table
-    );
+   -- Database: `creativelearning`
+--
 
-    -- Create CashMemos Table
-    CREATE TABLE CashMemos (
-        MemoID INT PRIMARY KEY,
-        TransactionID INT,
-        FilePath VARCHAR(255),
-        CopyTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FormatValidated BOOLEAN,
-        FOREIGN KEY (TransactionID) REFERENCES SalesTransactions(TransactionID)
-    );
+-- --------------------------------------------------------
 
-    -- Create XMLDocuments Table
-    CREATE TABLE XMLDocuments (
-        DocumentID INT PRIMARY KEY,
-        MemoID INT,
-        Content TEXT,
-        EntryTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (MemoID) REFERENCES CashMemos(MemoID)
-    );
+--
+-- Table structure for table `books`
+--
 
-    -- Create DailySalesAnalysis Table
-    CREATE TABLE DailySalesAnalysis (
-        AnalysisID INT PRIMARY KEY,
-        StoreID INT, -- Assuming multiple stores, remove if not applicable
-        AnalysisDate DATE,
-        TotalSales DECIMAL(10, 2),
-        FOREIGN KEY (StoreID) REFERENCES Stores(StoreID), -- Reference to the Stores table
-        CONSTRAINT UQ_DailySalesAnalysis UNIQUE (StoreID, AnalysisDate)
-    );
+CREATE TABLE `books` (
+  `isbn` varchar(255) NOT NULL,
+  `book_name` varchar(255) NOT NULL,
+  `author` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-    -- Create MonthlyPerformanceAnalysis Table
-    CREATE TABLE MonthlyPerformanceAnalysis (
-        AnalysisID INT PRIMARY KEY,
-        StoreID INT, -- Assuming multiple stores, remove if not applicable
-        AnalysisMonth DATE,
-        TotalSales DECIMAL(10, 2),
-        FOREIGN KEY (StoreID) REFERENCES Stores(StoreID), -- Reference to the Stores table
-        CONSTRAINT UQ_MonthlyPerformanceAnalysis UNIQUE (StoreID, AnalysisMonth)
-    );
+-- --------------------------------------------------------
 
-    -- Create DecisionMaking Table
-    CREATE TABLE DecisionMaking (
-        DecisionID INT PRIMARY KEY,
-        AnalysisID INT,
-        ResourceAllocation TEXT,
-        MarketingStrategy TEXT,
-        ImprovementAreas TEXT,
-        FOREIGN KEY (AnalysisID) REFERENCES DailySalesAnalysis(AnalysisID) ON DELETE CASCADE
-    );
+--
+-- Table structure for table `bookstores`
+--
 
-    -- Create UserAccounts Table
-    CREATE TABLE UserAccounts (
-        UserID INT PRIMARY KEY,
-        Username VARCHAR(50) UNIQUE,
-        PasswordHash VARCHAR(255),
-        Role VARCHAR(50)
-    );
+CREATE TABLE `bookstores` (
+  `bookstore_id` int(11) NOT NULL,
+  `bookstore_name` varchar(255) NOT NULL,
+  `city` varchar(255) NOT NULL,
+  `state` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-    -- Create Stores Table
-    CREATE TABLE Stores (
-        StoreID INT PRIMARY KEY,
-        StoreName VARCHAR(255) UNIQUE,
-        Location VARCHAR(255)
-    );
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customers`
+--
+
+CREATE TABLE `customers` (
+  `customer_id` int(11) NOT NULL,
+  `customer_name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transactions`
+--
+
+CREATE TABLE `transactions` (
+  `transaction_id` int(11) NOT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `bookstore_id` int(11) DEFAULT NULL,
+  `isbn` varchar(13) DEFAULT NULL,
+  `transaction_date` date DEFAULT NULL,
+  `amount` decimal(10,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 ```
