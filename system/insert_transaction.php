@@ -1,8 +1,15 @@
 <?php
+session_start();
+
+// Check if the user is not logged in
+if (!isset($_SESSION['username'])) {
+    // Redirect to the login page
+    header('Location: login.php');
+    exit;
+}
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Include your database connection file
     // Database configuration
     $servername = "localhost";
     $username = "root";

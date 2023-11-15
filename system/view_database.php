@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+// Check if the user is not logged in
+if (!isset($_SESSION['username'])) {
+    // Redirect to the login page
+    header('Location: login.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,7 +56,6 @@
 <div class="container mt-3">
 
     <?php
-    // Include your database connection file
     // Database configuration
     $servername = "localhost";
     $username = "root";

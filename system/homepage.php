@@ -1,3 +1,13 @@
+<?php
+session_start();
+// Check if the user is not logged in
+if (!isset($_SESSION['username'])) {
+    // Redirect to the login page
+    header('Location: login.php');
+    exit;
+};
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,37 +20,42 @@
 <body>
 
         <!-- Bootstrap Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="">Creative Learning</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="homepage.php">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="sales_entry.php">Sales Entry</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="view_database.php">View Database</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="view_transactions.php">View Transactions</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="update_database.php">Update Database</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="data_analysis.php">Data Analysis</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="about.php">About</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="">Creative Learning</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="homepage.php">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="sales_entry.php">Sales Entry</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="view_database.php">View Database</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="view_transactions.php">View Transactions</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="update_database.php">Update Database</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="data_analysis.php">Data Analysis</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="about.php">About</a>
+            </li>
+        </ul>
+        <!-- Add the Logout button to the left -->
+        <form class="form-inline my-2 my-lg-0" action="logout.php" method="post">
+            <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Logout</button>
+        </form>
+    </div>
+</nav>
+
 
     <div class="container mt-3">
         <h1>Welcome to the Creative Learning Sales Management System</h1>
