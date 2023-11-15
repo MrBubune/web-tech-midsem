@@ -273,5 +273,5 @@ CREATE TABLE `transactions` (
 
 ```
 ### Other information worth Knowing
-- [How I made diagrams](.\readme\graph.md)
-- [How I added session management](.\readme\session_management.md)
+- [How I made diagrams](readme\graph.md)
+- [How I added session management](readme\session_management.md)
