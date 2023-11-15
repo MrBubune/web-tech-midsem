@@ -77,6 +77,7 @@ mysqli_close($conn);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,16 +85,18 @@ mysqli_close($conn);
     <!-- Add Bootstrap CSS link here -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
+
 <body>
 
-        <!-- Bootstrap Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="">Creative Learning</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="homepage.php">Home</a>
                 </li>
@@ -116,6 +119,10 @@ mysqli_close($conn);
                     <a class="nav-link" href="about.php">About</a>
                 </li>
             </ul>
+            <!-- Add the Logout button to the left -->
+            <form class="form-inline my-2 my-lg-0" action="logout.php" method="post">
+                <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Logout</button>
+            </form>
         </div>
     </nav>
 
@@ -127,20 +134,27 @@ mysqli_close($conn);
             <div class="card">
                 <div class="card-header" id="createCustomerHeading">
                     <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#createCustomerCollapse" aria-expanded="true" aria-controls="createCustomerCollapse">
+                        <button class="btn btn-link" type="button" data-toggle="collapse"
+                            data-target="#createCustomerCollapse" aria-expanded="true"
+                            aria-controls="createCustomerCollapse">
                             Create Customer
                         </button>
                     </h2>
                 </div>
 
-                <div id="createCustomerCollapse" class="collapse" aria-labelledby="createCustomerHeading" data-parent="#createEntitiesAccordion">
+                <div id="createCustomerCollapse" class="collapse" aria-labelledby="createCustomerHeading"
+                    data-parent="#createEntitiesAccordion">
                     <div class="card-body">
-                        <?php if (isset($customer_message)) : ?>
-                            <div class="alert alert-success" role="alert"><?php echo $customer_message; ?></div>
+                        <?php if (isset($customer_message)): ?>
+                            <div class="alert alert-success" role="alert">
+                                <?php echo $customer_message; ?>
+                            </div>
                         <?php endif; ?>
 
-                        <?php if (isset($customer_error)) : ?>
-                            <div class="alert alert-danger" role="alert"><?php echo $customer_error; ?></div>
+                        <?php if (isset($customer_error)): ?>
+                            <div class="alert alert-danger" role="alert">
+                                <?php echo $customer_error; ?>
+                            </div>
                         <?php endif; ?>
 
                         <form action="" method="post">
@@ -151,10 +165,12 @@ mysqli_close($conn);
 
                             <div class="form-group">
                                 <label for="customer_name">Customer Name:</label>
-                                <input type="text" id="customer_name" name="customer_name" class="form-control" required>
+                                <input type="text" id="customer_name" name="customer_name" class="form-control"
+                                    required>
                             </div>
 
-                            <button type="submit" name="create_customer" class="btn btn-primary">Create Customer</button>
+                            <button type="submit" name="create_customer" class="btn btn-primary">Create
+                                Customer</button>
                         </form>
                     </div>
                 </div>
@@ -164,20 +180,27 @@ mysqli_close($conn);
             <div class="card">
                 <div class="card-header" id="createBookstoreHeading">
                     <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#createBookstoreCollapse" aria-expanded="false" aria-controls="createBookstoreCollapse">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#createBookstoreCollapse" aria-expanded="false"
+                            aria-controls="createBookstoreCollapse">
                             Create Bookstore
                         </button>
                     </h2>
                 </div>
 
-                <div id="createBookstoreCollapse" class="collapse" aria-labelledby="createBookstoreHeading" data-parent="#createEntitiesAccordion">
+                <div id="createBookstoreCollapse" class="collapse" aria-labelledby="createBookstoreHeading"
+                    data-parent="#createEntitiesAccordion">
                     <div class="card-body">
-                        <?php if (isset($bookstore_message)) : ?>
-                            <div class="alert alert-success" role="alert"><?php echo $bookstore_message; ?></div>
+                        <?php if (isset($bookstore_message)): ?>
+                            <div class="alert alert-success" role="alert">
+                                <?php echo $bookstore_message; ?>
+                            </div>
                         <?php endif; ?>
 
-                        <?php if (isset($bookstore_error)) : ?>
-                            <div class="alert alert-danger" role="alert"><?php echo $bookstore_error; ?></div>
+                        <?php if (isset($bookstore_error)): ?>
+                            <div class="alert alert-danger" role="alert">
+                                <?php echo $bookstore_error; ?>
+                            </div>
                         <?php endif; ?>
 
                         <form action="" method="post">
@@ -188,20 +211,24 @@ mysqli_close($conn);
 
                             <div class="form-group">
                                 <label for="bookstore_name">Bookstore Name:</label>
-                                <input type="text" id="bookstore_name" name="bookstore_name" class="form-control" required>
+                                <input type="text" id="bookstore_name" name="bookstore_name" class="form-control"
+                                    required>
                             </div>
 
                             <div class="form-group">
                                 <label for="bookstore_city">Bookstore City:</label>
-                                <input type="text" id="bookstore_city" name="bookstore_city" class="form-control" required>
+                                <input type="text" id="bookstore_city" name="bookstore_city" class="form-control"
+                                    required>
                             </div>
 
                             <div class="form-group">
                                 <label for="bookstore_state">Bookstore State:</label>
-                                <input type="text" id="bookstore_state" name="bookstore_state" class="form-control" required>
+                                <input type="text" id="bookstore_state" name="bookstore_state" class="form-control"
+                                    required>
                             </div>
 
-                            <button type="submit" name="create_bookstore" class="btn btn-primary">Create Bookstore</button>
+                            <button type="submit" name="create_bookstore" class="btn btn-primary">Create
+                                Bookstore</button>
                         </form>
                     </div>
                 </div>
@@ -211,20 +238,26 @@ mysqli_close($conn);
             <div class="card">
                 <div class="card-header" id="createBookHeading">
                     <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#createBookCollapse" aria-expanded="false" aria-controls="createBookCollapse">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#createBookCollapse" aria-expanded="false" aria-controls="createBookCollapse">
                             Create Book
                         </button>
                     </h2>
                 </div>
 
-                <div id="createBookCollapse" class="collapse" aria-labelledby="createBookHeading" data-parent="#createEntitiesAccordion">
+                <div id="createBookCollapse" class="collapse" aria-labelledby="createBookHeading"
+                    data-parent="#createEntitiesAccordion">
                     <div class="card-body">
-                        <?php if (isset($book_message)) : ?>
-                            <div class="alert alert-success" role="alert"><?php echo $book_message; ?></div>
+                        <?php if (isset($book_message)): ?>
+                            <div class="alert alert-success" role="alert">
+                                <?php echo $book_message; ?>
+                            </div>
                         <?php endif; ?>
 
-                        <?php if (isset($book_error)) : ?>
-                            <div class="alert alert-danger" role="alert"><?php echo $book_error; ?></div>
+                        <?php if (isset($book_error)): ?>
+                            <div class="alert alert-danger" role="alert">
+                                <?php echo $book_error; ?>
+                            </div>
                         <?php endif; ?>
 
                         <form action="" method="post">
@@ -258,4 +291,5 @@ mysqli_close($conn);
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

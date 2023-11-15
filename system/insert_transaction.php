@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,16 +57,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Add Bootstrap CSS link here -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
+
 <body>
 
-        <!-- Bootstrap Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="">Creative Learning</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="homepage.php">Home</a>
                 </li>
@@ -88,17 +91,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <a class="nav-link" href="about.php">About</a>
                 </li>
             </ul>
+            <!-- Add the Logout button to the left -->
+            <form class="form-inline my-2 my-lg-0" action="logout.php" method="post">
+                <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Logout</button>
+            </form>
         </div>
     </nav>
 
     <div class="container mt-3">
 
-        <?php if (isset($message)) : ?>
-            <div class="alert alert-success" role="alert"><?php echo $message; ?></div>
+        <?php if (isset($message)): ?>
+            <div class="alert alert-success" role="alert">
+                <?php echo $message; ?>
+            </div>
         <?php endif; ?>
 
-        <?php if (isset($error)) : ?>
-            <div class="alert alert-danger" role="alert"><?php echo $error; ?></div>
+        <?php if (isset($error)): ?>
+            <div class="alert alert-danger" role="alert">
+                <?php echo $error; ?>
+            </div>
         <?php endif; ?>
 
         <a href="sales_entry.php" class="btn btn-primary">Back to Sales Entry</a>
@@ -109,4 +120,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
