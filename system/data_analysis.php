@@ -1,5 +1,87 @@
+<?php
+// Include your database connection file
+// Database configuration
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "creativelearning";
+
+// Create connection
+$conn = mysqli_connect($servername, $username, $password, $database);
+
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Calculate Total Sales
+$totalSalesQuery = "SELECT SUM(amount) as totalSales FROM transactions";
+$totalSalesResult = mysqli_query($conn, $totalSalesQuery);
+$totalSales = mysqli_fetch_assoc($totalSalesResult)['totalSales'];
+
+// Sales by Bookstore
+$salesByBookstoreQuery = "SELECT bookstore_name, SUM(amount) as totalSales FROM transactions
+                         JOIN bookstores ON transactions.bookstore_id = bookstores.bookstore_id
+                         GROUP BY bookstore_name";
+$salesByBookstoreResult = mysqli_query($conn, $salesByBookstoreQuery);
+
+// Convert result set to an array for Doughnut Chart
+$salesByBookstoreData = [];
+while ($row = mysqli_fetch_assoc($salesByBookstoreResult)) {
+    $salesByBookstoreData[] = [
+        'bookstore_name' => $row['bookstore_name'],
+        'totalSales' => $row['totalSales'],
+    ];
+}
+
+// Best-selling Products
+$bestSellingProductsQuery = "SELECT book_name, COUNT(*) as salesCount FROM transactions
+                            JOIN books ON transactions.isbn = books.isbn
+                            GROUP BY book_name
+                            ORDER BY salesCount DESC
+                            LIMIT 5";
+$bestSellingProductsResult = mysqli_query($conn, $bestSellingProductsQuery);
+
+// Convert result set to an array for Bar Chart
+$bestSellingProductsData = [];
+while ($row = mysqli_fetch_assoc($bestSellingProductsResult)) {
+    $bestSellingProductsData[] = [
+        'book_name' => $row['book_name'],
+        'salesCount' => $row['salesCount'],
+    ];
+}
+
+// Handle sorting options
+$sortOption = isset($_GET['sort']) ? $_GET['sort'] : 'date'; // Default to sorting by date
+
+// Transaction Details Section
+if ($sortOption === 'day') {
+    $sortQuery = "DAY(transaction_date)";
+} elseif ($sortOption === 'month') {
+    $sortQuery = "MONTH(transaction_date)";
+} else {
+    $sortQuery = "transaction_date";
+}
+
+// Search Form
+$searchForm = '<form action="" method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search by Customer ID, Bookstore ID, or ISBN" name="search_term" aria-label="Search" aria-describedby="searchButton">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit" id="searchButton">Search</button>
+        </div>
+    </div>
+</form>';
+
+// Construct the query based on the sorting option
+$transactionDetailsQuery = "SELECT * FROM transactions ORDER BY $sortQuery DESC";
+$transactionDetailsResult = mysqli_query($conn, $transactionDetailsQuery);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,10 +91,11 @@
     <!-- Add Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-        <!-- Bootstrap Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="">Creative Learning</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -46,147 +129,160 @@
 
     <div class="container mt-3">
 
-        <?php
-        // Include your database connection file
-        // Database configuration
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $database = "creativelearning";
+        <!-- Sales Overview Section -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3>Sales Overview</h3>
+            </div>
+            <div class="card-body">
+                <p>Total Sales: $
+                    <?php echo number_format($totalSales, 2); ?>
+                </p>
+                <!-- Doughnut Chart Section -->
+                <div class="mb-3">
+                    <canvas id="doughnutChart" width="300" height="300"></canvas>
+                </div>
 
-        // Create connection
-        $conn = mysqli_connect($servername, $username, $password, $database);
-
-        // Check connection
-        if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-
-        // Query to analyze data
-        $analysisQuery = "SELECT transactions.bookstore_id, bookstores.bookstore_name, COUNT(*) AS total_transactions, SUM(amount) AS total_sales
-                          FROM transactions
-                          JOIN bookstores ON transactions.bookstore_id = bookstores.bookstore_id
-                          GROUP BY transactions.bookstore_id";
-
-        // Fetch data from the database
-        $result = mysqli_query($conn, $analysisQuery);
-
-        // Check if there are any records
-        if (mysqli_num_rows($result) > 0) {
-            echo "<h2>Data Analysis - Bookstores</h2>";
-
-            // Data for charts
-            $bookstoreNames = [];
-            $totalTransactions = [];
-            $totalSales = [];
-
-            // Fetch data for charts
-            while ($row = mysqli_fetch_assoc($result)) {
-                $bookstoreNames[] = $row['bookstore_name'];
-                $totalTransactions[] = $row['total_transactions'];
-                $totalSales[] = $row['total_sales'];
-            }
-
-            // Display pie chart for total transactions
-            echo "<div style='width: 50%; margin: 20px;'>";
-            echo "<h4>Total Transactions by Bookstore</h4>";
-            echo "<canvas id='transactionsPieChart'></canvas>";
-            echo "</div>";
-
-            // Display bar graph for total sales
-            echo "<div style='width: 50%; margin: 20px;'>";
-            echo "<h4>Total Sales by Bookstore</h4>";
-            echo "<canvas id='salesBarGraph'></canvas>";
-            echo "</div>";
-
-            // JavaScript for charts
-            echo "<script>";
-            echo "var transactionsPieChart = new Chart(document.getElementById('transactionsPieChart'), {
-                    type: 'pie',
-                    data: {
-                        labels: " . json_encode($bookstoreNames) . ",
-                        datasets: [{
-                            data: " . json_encode($totalTransactions) . ",
-                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-                        }]
+                <hr>
+                <h5>Sales by Bookstore</h5>
+                <ul>
+                    <?php
+                    foreach ($salesByBookstoreData as $data) {
+                        echo "<li>{$data['bookstore_name']}: $" . number_format($data['totalSales'], 2) . "</li>";
                     }
-                });";
+                    ?>
+                </ul>
 
-            echo "var salesBarGraph = new Chart(document.getElementById('salesBarGraph'), {
-                    type: 'bar',
-                    data: {
-                        labels: " . json_encode($bookstoreNames) . ",
-                        datasets: [{
-                            label: 'Total Sales',
-                            data: " . json_encode($totalSales) . ",
-                            backgroundColor: '#36A2EB',
-                            borderColor: '#36A2EB',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
+                <!-- Bar Chart Section -->
+                <div class="mt-3">
+                    <canvas id="barChart" width="300" height="150"></canvas>
+                </div>
+
+                <hr>
+                <h5>Best-selling Products</h5>
+                <ul>
+                    <?php
+                    foreach ($bestSellingProductsData as $data) {
+                        echo "<li>{$data['book_name']} ({$data['salesCount']} sales)</li>";
                     }
-                });";
-            echo "</script>";
+                    ?>
+                </ul>
+            </div>
+        </div>
 
-            // Display table for transaction details
-            echo "<h2>Transaction Details</h2>";
-            echo "<table class='table'>";
-            echo "<thead>";
-            echo "<tr>";
-            echo "<th>Transaction ID</th>";
-            echo "<th>Customer Name</th>";
-            echo "<th>Bookstore Name</th>";
-            echo "<th>ISBN</th>";
-            echo "<th>Transaction Date</th>";
-            echo "<th>Amount</th>";
-            echo "</tr>";
-            echo "</thead>";
-            echo "<tbody>";
+        <!-- Transaction Details Section -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Transaction Details</h3>
+            </div>
+            <div class="card-body">
 
-            // Query to fetch transaction details
-            $transactionDetailsQuery = "SELECT transactions.transaction_id, customers.customer_name, bookstores.bookstore_name, transactions.isbn, transactions.transaction_date, transactions.amount
-                                        FROM transactions
-                                        JOIN customers ON transactions.customer_id = customers.customer_id
-                                        JOIN bookstores ON transactions.bookstore_id = bookstores.bookstore_id";
+                <?php echo $searchForm; ?>
 
-            $transactionDetailsResult = mysqli_query($conn, $transactionDetailsQuery);
+                <!-- Sorting Options -->
+                <div class="mb-3">
+                    <label for="sortSelect">Sort By:</label>
+                    <select class="form-control" id="sortSelect" name="sort" onchange="this.form.submit()">
+                        <option value="date" <?php echo ($sortOption === 'date') ? 'selected' : ''; ?>>Date</option>
+                        <option value="day" <?php echo ($sortOption === 'day') ? 'selected' : ''; ?>>Day</option>
+                        <option value="month" <?php echo ($sortOption === 'month') ? 'selected' : ''; ?>>Month</option>
+                    </select>
+                </div>
 
-            // Display transaction details in the table
-            while ($transaction = mysqli_fetch_assoc($transactionDetailsResult)) {
-                echo "<tr>";
-                echo "<td>{$transaction['transaction_id']}</td>";
-                echo "<td>{$transaction['customer_name']}</td>";
-                echo "<td>{$transaction['bookstore_name']}</td>";
-                echo "<td>{$transaction['isbn']}</td>";
-                echo "<td>{$transaction['transaction_date']}</td>";
-                echo "<td>{$transaction['amount']}</td>";
-                echo "</tr>";
-            }
+                <?php
+                if (mysqli_num_rows($transactionDetailsResult) > 0) {
+                    echo '<table class="table">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Customer ID</th>
+                            <th>Bookstore ID</th>
+                            <th>ISBN</th>
+                            <th>Transaction Date</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
 
-            echo "</tbody>";
-            echo "</table>";
-        } else {
-            echo "No records found for analysis.";
-        }
+                    while ($row = mysqli_fetch_assoc($transactionDetailsResult)) {
+                        echo '<tr>
+                        <td>' . $row['transaction_id'] . '</td>
+                        <td>' . $row['customer_id'] . '</td>
+                        <td>' . $row['bookstore_id'] . '</td>
+                        <td>' . $row['isbn'] . '</td>
+                        <td>' . $row['transaction_date'] . '</td>
+                        <td>$' . number_format($row['amount'], 2) . '</td>
+                    </tr>';
+                    }
 
-        // Close the database connection
-        mysqli_close($conn);
-
-        
-        ?>
+                    echo '</tbody></table>';
+                } else {
+                    echo '<p>No transactions found.</p>';
+                }
+                ?>
+            </div>
+        </div>
 
     </div>
-        
 
     <!-- Add Bootstrap JS and Popper.js scripts here -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Doughnut Chart
+        var doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
+        var doughnutChart = new Chart(doughnutCtx, {
+            type: 'doughnut',
+            data: {
+                labels: <?php echo json_encode(array_column($salesByBookstoreData, 'bookstore_name')); ?>,
+                datasets: [{
+                    data: <?php echo json_encode(array_column($salesByBookstoreData, 'totalSales')); ?>,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            }
+        });
+
+        // Bar Chart
+        var barCtx = document.getElementById('barChart').getContext('2d');
+        var barChart = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode(array_column($bestSellingProductsData, 'book_name')); ?>,
+                datasets: [{
+                    label: 'Sales Count',
+                    data: <?php echo json_encode(array_column($bestSellingProductsData, 'salesCount')); ?>,
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 </body>
+
 </html>
