@@ -272,3 +272,5 @@ CREATE TABLE `transactions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 ```
+### Other information worth Knowing
+[How I made diagrams](.\readme\graph.md)
