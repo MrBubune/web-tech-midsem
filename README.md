@@ -59,7 +59,7 @@ All of the six bookstores in New York are connected to a main server over a LAN.
 
 ### New (Automated) Process
 
-The development team at Creative Learning has decided to automate the entire process. When a salesperson issues a cash memo to a customer, the salesperson makes a copy of the cash memo in the specified directory on the main server. Then, on the main server, the format of the cash memo is checked for accuracy. Once the format is validated, the entry of the cash memo will be made into the XML document.The data in the document can then be easily analyzed to see the performance of each of the bookstores.
+The development team at Creative Learning has decided to automate the entire process. When a salesperson issues a cash memo to a customer, the salesperson makes a copy of the cash memo in the specified directory on the main server. Then, on the main server, the format of the cash memo is checked for accuracy. Once the format is validated, the entry of the cash memo will be made into the XML document. The data in the document can then be easily analyzed to see the performance of each of the bookstores.
 
 #### Pseudocode
 ```
@@ -275,3 +275,5 @@ CREATE TABLE `transactions` (
 ### Other information worth Knowing
 - [How I made diagrams](readme/graph.md)
 - [How I added session management](readme/session_management.md)
+
+# Update 1
